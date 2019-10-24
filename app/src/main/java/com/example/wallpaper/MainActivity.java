@@ -1,6 +1,8 @@
 package com.example.wallpaper;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.WallpaperManager;
 import android.content.Context;
@@ -9,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,106 +20,59 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    GridView myGridView;
-    ImageView myCurrentWallpaper;
-    Drawable myDrawable;
-    WallpaperManager myWallManager;
-    Integer[] myImageArray={
-            R.drawable.thumb1,R.drawable.thumb2,R.drawable.thumb3,R.drawable.thumb4,R.drawable.thumb5
-    };
+    private RecyclerView recyclerView;
+    private List<Custom_Items> list;
+    public CustomAdapter adapter;
+    NetworkInfo info;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myGridView=findViewById(R.id.myGridView);
-        myCurrentWallpaper=findViewById(R.id.myImageView);
-        myGridView.setAdapter(new ImageAdapter(getApplicationContext()));
-        //UpdateMyWallpaper();
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
+        info = cm.getActiveNetworkInfo();
+        if (info != null) {
+
+            Toast.makeText(MainActivity.this, "Loading..", Toast.LENGTH_SHORT).show();
+
+        } else {
+
+            Toast.makeText(this, "No Internet Connection!", Toast.LENGTH_LONG).show();
+
+        }
+        recyclerView = findViewById(R.id.recyclerview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        list = new ArrayList<>();
+
+
+        list.add(new Custom_Items("https://images.pexels.com/photos/1535162/pexels-photo-1535162.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        list.add(new Custom_Items("https://images.pexels.com/photos/1156684/pexels-photo-1156684.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        list.add(new Custom_Items("https://images.pexels.com/photos/1639944/pexels-photo-1639944.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        list.add(new Custom_Items("https://images.pexels.com/photos/1366919/pexels-photo-1366919.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        list.add(new Custom_Items("https://images.pexels.com/photos/1236701/pexels-photo-1236701.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        list.add(new Custom_Items("https://images.pexels.com/photos/1433052/pexels-photo-1433052.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"));
+        list.add(new Custom_Items(""));
+        list.add(new Custom_Items(""));
+
+
+        getdata();
 
 
     }
-    private void UpdateMyWallpaper()
-    {
-        myWallManager=WallpaperManager.getInstance(getApplicationContext());
-        myDrawable=myWallManager.getDrawable();
-        myCurrentWallpaper.setImageDrawable(myDrawable);
-    }
+    private void getdata() {
 
-    public void btn_set(View view) {
-        Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.drawable.thumb1);
-        myWallManager=WallpaperManager.getInstance(getApplicationContext());
-        try{
-            myWallManager.setBitmap(bitmap);
-        }
-        catch (IOException e){
 
-        }
+        adapter = new CustomAdapter(list, this);
+        recyclerView.setAdapter(adapter);
 
-    }
-    public Bitmap convertToBitmap(int position, int widthPixels, int heightPixels) {
-        Drawable drawable=getResources().getDrawable(myImageArray[position],getTheme());;
-        Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(mutableBitmap);
-        drawable.setBounds(0, 0, widthPixels, heightPixels);
-        drawable.draw(canvas);
-
-        return mutableBitmap;
-    }
-
-    public class ImageAdapter extends BaseAdapter{
-
-        Context myContext;
-        public ImageAdapter(Context applicationContext) {
-            myContext=applicationContext;
-        }
-
-        @Override
-        public int getCount() {
-            return myImageArray.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-           ImageButton GridImageView;
-            if(convertView==null)
-            {
-                GridImageView=new ImageButton(myContext);
-                GridImageView.setLayoutParams(new GridView.LayoutParams(512,512));
-                GridImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            }
-            else{
-                GridImageView=(ImageButton) convertView;
-            }
-            GridImageView.setImageResource(myImageArray[position]);
-            GridImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bitmap bitmap= convertToBitmap(position,1024,1024);
-                    try {
-                        myWallManager.setBitmap(bitmap);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //UpdateMyWallpaper();
-                }
-            });
-
-            return GridImageView;
-        }
     }
 }
