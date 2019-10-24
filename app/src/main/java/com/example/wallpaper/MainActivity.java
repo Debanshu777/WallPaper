@@ -4,6 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +45,28 @@ public class MainActivity extends AppCompatActivity {
         myDrawable=myWallManager.getDrawable();
         myCurrentWallpaper.setImageDrawable(myDrawable);
     }
+
+    public void btn_set(View view) {
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.drawable.thumb1);
+        myWallManager=WallpaperManager.getInstance(getApplicationContext());
+        try{
+            myWallManager.setBitmap(bitmap);
+        }
+        catch (IOException e){
+
+        }
+
+    }
+    public Bitmap convertToBitmap(int position, int widthPixels, int heightPixels) {
+        Drawable drawable=getResources().getDrawable(myImageArray[position],getTheme());;
+        Bitmap mutableBitmap = Bitmap.createBitmap(widthPixels, heightPixels, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(mutableBitmap);
+        drawable.setBounds(0, 0, widthPixels, heightPixels);
+        drawable.draw(canvas);
+
+        return mutableBitmap;
+    }
+
     public class ImageAdapter extends BaseAdapter{
 
         Context myContext;
@@ -79,8 +105,9 @@ public class MainActivity extends AppCompatActivity {
             GridImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Bitmap bitmap= convertToBitmap(position,1024,1024);
                     try {
-                        myWallManager.setResource(myImageArray[position]);
+                        myWallManager.setBitmap(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
