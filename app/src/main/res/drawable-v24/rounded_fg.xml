@@ -5,9 +5,7 @@
     android:shape="ring"
     android:thicknessRatio="1"
     android:useLevel="false">
-    <gradient
-        android:type="radial"
-        android:gradientRadius="8dp"
-        android:endColor="#ffffff"
+    <solid
+        android:color="#ffffff"
         />
 </shape>

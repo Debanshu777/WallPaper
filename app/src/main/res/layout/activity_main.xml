@@ -4,15 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:layout_gravity="center"
+    android:background="@color/colorPrimary"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-        <ScrollView
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="37dp"
+        android:background="@color/colorPrimary">
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="WallPaper Pro"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            />
+    </androidx.appcompat.widget.Toolbar>
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:padding="5dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_background">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
